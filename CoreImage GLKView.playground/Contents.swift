@@ -51,4 +51,3 @@ view.setNeedsDisplay()
 
 // Tell playground to show 
 PlaygroundPage.current.liveView = view
-PlaygroundPage.current.needsIndefiniteExecution = true
