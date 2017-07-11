@@ -18,37 +18,37 @@
 
 import GLKit
 import CoreImage
-import XCPlayground
+import PlaygroundSupport
 
 class MyGLKView: GLKView {
     
     var image: CIImage?
     var ciContext: CIContext?
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         if let image = self.image {
             // OpenGLES draws in pixels, not points so we scale to whatever the contents scale is.
-            let scale = CGAffineTransformMakeScale(self.contentScaleFactor, self.contentScaleFactor)
-            let drawingRect = CGRectApplyAffineTransform(rect, scale)
+            let scale = CGAffineTransform(scaleX: self.contentScaleFactor, y: self.contentScaleFactor)
+            let drawingRect = rect.applying(scale)
             // The image.extent() is the bounds of the image.
-            self.ciContext?.drawImage(image, inRect: drawingRect, fromRect: image.extent())
+            self.ciContext?.draw(image, in: drawingRect, from: image.extent)
         }
     }
-    
 }
 
 // Create an image
-let imageURL = NSBundle.mainBundle().URLForResource("pulsar-logo", withExtension: "jpg")
-let image = CIImage(contentsOfURL: imageURL)
+let imageURL = Bundle.main.url(forResource: "pulsar-logo", withExtension: "jpg")!
+let image = CIImage(contentsOf: imageURL)
 
 // Create a GLKView
-let eaglContext = EAGLContext(API: .OpenGLES2)
-let view = MyGLKView(frame: CGRectMake(0, 0, 128, 128), context: eaglContext)
-view.ciContext = CIContext(EAGLContext: eaglContext)
+let eaglContext = EAGLContext(api: .openGLES2)!
+let view = MyGLKView(frame: CGRect(x: 0, y: 0, width: 128, height: 128), context: eaglContext)
+view.ciContext = CIContext(eaglContext: eaglContext)
 view.image = image
 
 // Tell the GLKView to draw
 view.setNeedsDisplay()
 
-// Tell playground to show the view
-XCPShowView("MyGLKView", view)
+// Tell playground to show 
+PlaygroundPage.current.liveView = view
+PlaygroundPage.current.needsIndefiniteExecution = true
